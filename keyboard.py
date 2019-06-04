@@ -1,5 +1,7 @@
 import pygame
 from tetris import Tetris
+import features
+import sys
 
 key_actions=['RIGHT','LEFT','DOWN','UP','z','SPACE','LSHIFT']
 delay_time= [ 150,150,200,200,200,400,450]
@@ -19,6 +21,9 @@ class Keyboard:
                         for idx,key in enumerate(key_actions):
                             if evt.key == eval("pygame.K_"+key):
                                 state,_,done,_,_ = self.T.step(idx)
+                                print(len(state[0]), len(state[1]))
+                                print(len(features.evaluate_features(state)))
+                                sys.stdout.flush()
                                 flag = True
                                 pygame.time.wait(delay_time[idx])
                 keys_pressed = pygame.key.get_pressed()
@@ -27,6 +32,9 @@ class Keyboard:
                         key = eval("pygame.K_"+key)
                         if keys_pressed[key]:
                             state,_,done,_,_ = self.T.step(idx)
+                            print(len(state[0]), len(state[1]))
+                            print(len(features.evaluate_features(state)))
+                            sys.stdout.flush()
                             if idx == [3,4,5,6]:
                                 pygame.time.wait(delay_time[idx])
                 pygame.time.wait(10)
