@@ -491,7 +491,7 @@ class Tetris:
                     print(grid[i][j][0],end='')
                 print()
             print(Y)
-            print("Rewards:",reward)
+            print("Rewards:", reward)
             self.display()
             import time
             time.sleep(1)

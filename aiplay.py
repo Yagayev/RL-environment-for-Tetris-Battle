@@ -2,6 +2,9 @@
 import pygame
 from tetris import Tetris
 import random
+import json
+import numpy as np
+import sys
 
 spartan = True
 
@@ -103,18 +106,32 @@ def create_vectors(size,initVal):
             singleVec[j] = initVal
         allVecs[i] = singleVec
         #print(allVecs[i])
+    filename = 'vecs.json'
+    try:
+        with open(filename) as data_file:
+            allVecs = json.load(data_file)
+    except:
+        print("No file inisiall 0")
+    finally:
+        print("successfully loaded file")
 
     return allVecs
 
 class EvalActions:
 
-    def __init__(self,size,initVal):
-        self.weights = create_vectors(size,initVal)
+    def __init__(self,size, initVal):
+        self.weights = create_vectors(size, initVal)
 
     def eval_grade(self, state, action):
         if (0 <= action < 53 ):
             return vec_scalaric_mul(self.weights[action], state)
         raise(NonLegalAction("not a valid action "))
+
+    def save_vecs(self):
+        with open('vecs.json', 'w') as outfile:
+            json.dump(self.weights, outfile, indent=4)
+
+
 
     def normalize3(self, relevent):
         for i in range(0, len(relevent)):
@@ -126,8 +143,6 @@ class EvalActions:
 
                 for vec in self.weights:
                     mul_vec_by_a_acalar(2 / diviser, vec)
-
-
 
     def update(self, state, action, actual_grade ,nextval):
         # based on lecture 6 page page 14
@@ -176,26 +191,24 @@ def act_epsilon_greedy(given_state, action_evaluator):
 def act_greedy(given_state, action_evaluator):
     best_action = 0
     best_action_grade = 0
-    for i in range(0,53):
-        eval = action_evaluator.eval_grade(given_state, i)
-        if(eval > best_action_grade ):
-            best_action_grade = eval
+    for i in range(53):
+        evaled = action_evaluator.eval_grade(given_state, i)
+        if(evaled > best_action_grade ):
+            best_action_grade = evaled
             best_action = i
     return best_action
 
 
-
 def observation_to_score(observation):
-    return  -abs(observation[2])
+    return - abs(observation[2])
 
 
 def act_random():
-    return random.randint(0, 53)
+    return random.randint(0, 52)
 
 
 
 
-import numpy as np
 
 # input: tetris state, expecting an array with 2 elements, the first is the board grid
 # and the second is an array with the binary 42 numbers representing the 7 shapes(current,
@@ -239,35 +252,46 @@ def two_feature_arrs_to_grid(arr1, arr2):
     return ans
 
 
+def get_score(oldCleared, newCleared, isComplete):
+    score = 0
+    if not isComplete:
+        score = 1
+    score = score + (newCleared-oldCleared)*10
+    return score
+
 def main():
     global alpha, epsilon
-    env = Tetris(action_type='grouped', is_display=True)
-
+    # run_env = Tetris(action_type='grouped', is_display=True)
+    train_env = Tetris(action_type='grouped', is_display=False)
+    env = train_env
     observation = env.reset()
     state = evaluate_features(observation)
-    print(state)
+    # print(state)
 
-    action_evaluator = EvalActions(len(state),1.0)
+    action_evaluator = EvalActions(len(state), 1.0)
     iteration = 0
     grad_sum = 0
     rand = False
-    for i_episode in range(5000000):
+    total_score = 0
+    for i_episode in range(5000):
         observation = env.reset()
         grade = 0
         state = evaluate_features(observation)
         old_state = False
-        for t in range(2000):
+        for t in range(2000000):
             if alpha_decay:
                 alpha = max(alpha * alpha_decay_factor, alpha_min)
             if rand:
                 env.render()
             prevClear = env.totalCleared
-            action = act_epsilon_greedy(state,action_evaluator)
+            action = act_epsilon_greedy(state, action_evaluator)
 
             observation, _, done, _, _ = env.step(action)
 
             if not done:
-                grade = env.totalCleared -  prevClear
+                # grade = env.totalCleared -  prevClear
+                grade = get_score(prevClear, env.totalCleared, done)
+                grad_sum += grade
                 nextstate = evaluate_features(observation)
                 if old_state:
                     action = act_greedy(nextstate, action_evaluator)
@@ -275,35 +299,24 @@ def main():
                     action_evaluator.update(old_state, action, grade,nextval)
                 old_state = state
                 state = nextstate
-
-
-
             # print("reward:", reward)
             if done:
+                print("action is", action)
+                print("grade_sum is", grad_sum/(iteration+1))
+                sys.stdout.flush()
                 action_evaluator.update(old_state, action, -500, 0)
                 iteration += 1
                 grad_sum += grade
-                rand = False
+                env = train_env
                 if iteration % 500 == 0:
-                    print(i_episode, "Avrage:", grad_sum/iteration,
-                          "\nepsilon:", epsilon, "alpha:", alpha,
-                          "\nAction vec left", action_evaluator.weights_left,
-                          "\nAction vec right", action_evaluator.weights_right,
-                          "\n")
-                    #f = open('resolts.csv', 'a')
-                    #with f:
-                     #   writer = csv.writer(f)
-                      #  writer.writerows([[i_episode]])
-                    rand = True
-                    if spartan:
-                        if grad_sum/iteration < 22:
-                            epsilon = epsilon_init
-                            alpha = alpha_init
-                            action_evaluator = EvalActions(len(state) , 1.0)
+                    print(grad_sum/iteration)
+                    sys.stdout.flush()
                     iteration = 0
                     grad_sum = 0
+                    # env = run_env
                 break
     env.close()
+
 
 if __name__ == '__main__':
     main()
