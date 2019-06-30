@@ -136,10 +136,9 @@ class EvalActions:
         raise(NonLegalAction("not a valid action "))
 
     def save_vecs(self):
-        print(self.weights)
-        # lst = [x.toList() for x in self.weights]
+        lst = [x.tolist() for x in self.weights]
         with open('vecs.json', 'w') as outfile:
-            json.dump(self.weights, outfile, indent=4)
+            json.dump(lst, outfile, indent=4)
 
 
 
@@ -180,8 +179,7 @@ class EvalActions:
             #       "\nadd_vec ", add_vec(self.weights, delta_w))
             self.weights[action] = add_vec(self.weights[action], delta_w)
             norm = np.linalg.norm(self.weights)
-            for weight in self.weights:
-                weight = weight / norm
+            self.weights = [weight / norm for weight in self.weights]
             #self.normalize3(self.weights_right)
         else:
             raise (NonLegalAction("not valid action"))
@@ -318,14 +316,13 @@ def main():
                 state = nextstate
             # print("reward:", reward)
             if done:
-                print("action is", action)
                 print("grade_sum is", grad_sum/(iteration+1))
                 sys.stdout.flush()
                 action_evaluator.update(old_state, action, -500, 0)
                 iteration += 1
                 grad_sum += grade
                 env = train_env
-                if iteration % 10 == 0:
+                if iteration % 30 == 0:
                     print(grad_sum/iteration)
                     f = open('resolts.csv', 'a', newline='')
                     with f:

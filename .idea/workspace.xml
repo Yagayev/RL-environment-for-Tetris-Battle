@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="489232ca-e87b-4eea-89dd-67f858c9d38b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/aiplay.py" beforeDir="false" afterPath="$PROJECT_DIR$/aiplay.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resolts.csv" beforeDir="false" afterPath="$PROJECT_DIR$/resolts.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vecs.json" beforeDir="false" afterPath="$PROJECT_DIR$/vecs.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,21 +17,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/aiplay.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="155">
-              <caret line="141" column="27" selection-start-line="141" selection-start-column="27" selection-end-line="141" selection-end-column="27" />
+            <state relative-caret-position="35">
+              <caret line="318" selection-start-line="318" selection-end-line="318" />
               <folding>
                 <element signature="e#1#14#0" expanded="true" />
                 <element signature="e#2836#3168#0" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tetris.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8381">
-              <caret line="498" column="37" selection-start-line="498" selection-start-column="31" selection-end-line="498" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -52,6 +44,8 @@
       <find>mul_vec_by_a_acalar</find>
       <find>EVAL</find>
       <find>vecs.json</find>
+      <find>JSON</find>
+      <find>DUMP</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -184,13 +178,13 @@
       <window_info id="UI Designer" order="6" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.45188284" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.28730822" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.18131101" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Python Console" order="10" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -272,8 +266,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/aiplay.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="141" column="27" selection-start-line="141" selection-start-column="27" selection-end-line="141" selection-end-column="27" />
+        <state relative-caret-position="35">
+          <caret line="318" selection-start-line="318" selection-end-line="318" />
           <folding>
             <element signature="e#1#14#0" expanded="true" />
             <element signature="e#2836#3168#0" />
