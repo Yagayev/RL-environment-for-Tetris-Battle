@@ -5,8 +5,11 @@ import random
 import json
 import numpy as np
 import sys
+import csv
+import warnings
 
-spartan = True
+np.seterr(all='warn')
+spartan = False
 
 if spartan:
     alpha_init = 0.1
@@ -97,12 +100,11 @@ def normalize_to_one(vec):
     return mul_vec_by_a_acalar(1/diviser, vec)
 
 
-def create_vectors(size,initVal):
-    allVecs = [0]* 53
-    i = 0
+def create_vectors(size, initVal):
+    allVecs = [0] * 53
     for i in range(53):
-        singleVec = [0]* size
-        for j in range(0 ,size):
+        singleVec = [0] * size
+        for j in range(0, size):
             singleVec[j] = initVal
         allVecs[i] = singleVec
         #print(allVecs[i])
@@ -110,11 +112,12 @@ def create_vectors(size,initVal):
     try:
         with open(filename) as data_file:
             allVecs = json.load(data_file)
+            print("successfully loaded file")
     except:
-        print("No file inisiall 0")
+        print("No file; initial 1")
     finally:
-        print("successfully loaded file")
-
+        print("done trying to load")
+    allVecs = [np.array(x, dtype=np.float64) for x in allVecs]
     return allVecs
 
 class EvalActions:
@@ -123,11 +126,18 @@ class EvalActions:
         self.weights = create_vectors(size, initVal)
 
     def eval_grade(self, state, action):
+
+        state = np.array(state)
+        norm = np.linalg.norm(state)
+        state = state/norm
+        # print("state", state, "norm", norm, "")
         if (0 <= action < 53 ):
-            return vec_scalaric_mul(self.weights[action], state)
+            return np.dot(self.weights[action], state)
         raise(NonLegalAction("not a valid action "))
 
     def save_vecs(self):
+        print(self.weights)
+        # lst = [x.toList() for x in self.weights]
         with open('vecs.json', 'w') as outfile:
             json.dump(self.weights, outfile, indent=4)
 
@@ -144,18 +154,21 @@ class EvalActions:
                 for vec in self.weights:
                     mul_vec_by_a_acalar(2 / diviser, vec)
 
-    def update(self, state, action, actual_grade ,nextval):
+    def update(self, state, action, actual_grade, nextval):
         # based on lecture 6 page page 14
         # print("state predict update", self.weights_left, state)
         expected_grade = self.eval_grade(state, action)
-        grade_error = (actual_grade + nextval*0.001 -expected_grade)
+        grade_error = (actual_grade + nextval*0.001 - expected_grade)
         # if(-0.01 < grade_error <0.01 ):
         #     return
         if (0 <= action < 53 ):
             # grad_times_error_vec = mul_vec_by_a_acalar(grade_error, gradient)
-            state_times_w = mul_vec(self.weights[action], state)
-            error_times_w_states_vec = mul_vec_by_a_acalar(grade_error, state_times_w)
-            delta_w = mul_vec_by_a_acalar(alpha, error_times_w_states_vec)
+            try:
+                state_times_w = np.multiply(self.weights[action], state)
+                error_times_w_states_vec = grade_error * state_times_w
+                delta_w = alpha * error_times_w_states_vec
+            except Warning:
+                print("weights:", self.weights[action], "\nstate:", state)
             # print("update StateEval\n",
             #       "\nweights ", self.weights,
             #       "\nstate ", state,
@@ -165,7 +178,10 @@ class EvalActions:
             #       "\nerror_times_w_states_vec ", error_times_w_states_vec,
             #       "\ndelta_w ", delta_w,
             #       "\nadd_vec ", add_vec(self.weights, delta_w))
-            self.weights_right = add_vec(self.weights[action], delta_w)
+            self.weights[action] = add_vec(self.weights[action], delta_w)
+            norm = np.linalg.norm(self.weights)
+            for weight in self.weights:
+                weight = weight / norm
             #self.normalize3(self.weights_right)
         else:
             raise (NonLegalAction("not valid action"))
@@ -258,7 +274,8 @@ def get_score(oldCleared, newCleared, isComplete):
         score = 1
     score = score + (newCleared-oldCleared)*10
     return score
-
+def rate(curckear ,prevclear):
+    return 100*(curckear - prevclear) + 1
 def main():
     global alpha, epsilon
     # run_env = Tetris(action_type='grouped', is_display=True)
@@ -273,7 +290,7 @@ def main():
     grad_sum = 0
     rand = False
     total_score = 0
-    for i_episode in range(5000):
+    for i_episode in range(1000000):
         observation = env.reset()
         grade = 0
         state = evaluate_features(observation)
@@ -308,14 +325,20 @@ def main():
                 iteration += 1
                 grad_sum += grade
                 env = train_env
-                if iteration % 500 == 0:
+                if iteration % 10 == 0:
                     print(grad_sum/iteration)
-                    sys.stdout.flush()
+                    f = open('resolts.csv', 'a', newline='')
+                    with f:
+                        writer = csv.writer(f)
+                        writer.writerows([[grad_sum/iteration]])
+                    action_evaluator.save_vecs()
+                    # sys.stdout.flush()
                     iteration = 0
                     grad_sum = 0
                     # env = run_env
                 break
     env.close()
+    action_evaluator.save_vecs()
 
 
 if __name__ == '__main__':
