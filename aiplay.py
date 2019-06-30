@@ -9,28 +9,15 @@ import csv
 import warnings
 
 np.seterr(all='warn')
-spartan = False
+alpha_init = 0.05
+alpha_min = 0.001
+alpha_decay = False
+alpha_decay_factor = 0.999999999
 
-if spartan:
-    alpha_init = 0.1
-    alpha_min = 0.001
-    alpha_decay = True
-    alpha_decay_factor = 0.999999
-
-    epsilon_init = 0.8
-    epsilon_decay = True
-    epsilon_min = 0.0001
-    epsilon_decay_factor = 0.99999
-else:
-    alpha_init = 0.01
-    alpha_min = 0.001
-    alpha_decay = False
-    alpha_decay_factor = 0.999999999
-
-    epsilon_init = 0.8
-    epsilon_decay = True
-    epsilon_min = 0.0001
-    epsilon_decay_factor = 0.999999
+epsilon_init = 0.2
+epsilon_decay = False
+epsilon_min = 0.0001
+epsilon_decay_factor = 0.999999
 
 
 alpha = alpha_init
