@@ -17,7 +17,7 @@ alpha_decay_factor = 0.999999999
 epsilon_init = 0.8
 epsilon_decay = True
 epsilon_min = 0.01
-epsilon_decay_factor = 0.999991
+epsilon_decay_factor = 0.999998
 
 
 alpha = alpha_init
@@ -52,8 +52,8 @@ class EvalActions:
     def eval_grade(self, state, action):
 
         state = np.array(state)
-        norm = np.linalg.norm(state)
-        state = state/norm
+        # norm = np.linalg.norm(state)
+        # state = state/norm
         # print("state", state, "norm", norm, "")
         if (0 <= action < 52 ):
             return np.dot(self.weights[action], state)
@@ -101,12 +101,15 @@ class NonLegalAction(ValueError):
     pass
 
 
-def act_epsilon_greedy(given_state, action_evaluator):
+def act_epsilon_greedy(given_state, action_evaluator, perv_best):
     global epsilon
     rand_seed = random.random()
 
     if rand_seed > epsilon:
-        ans = act_greedy(given_state, action_evaluator)
+        if perv_best != None:
+            ans, _ = act_greedy(given_state, action_evaluator)
+        else:
+            ans = perv_best
     else:
         ans = act_random()
     if epsilon_decay:
@@ -122,7 +125,7 @@ def act_greedy(given_state, action_evaluator):
         if(evaled > best_action_grade ):
             best_action_grade = evaled
             best_action = i
-    return best_action
+    return best_action, best_action_grade
 
 
 def observation_to_score(observation):
@@ -159,8 +162,11 @@ def evaluate_features(state):
     square_grid = []
     for square in squares:
         square_grid += preceptions_to_feacher_array(square)
+    flattened_board = np.array(state[0]).flatten()
+    board_cubes_grid = np.array(two_feature_arrs_to_grid(flattened_board, state[1][0:7]))
     ans = np.append(line_grid, col_grid)
     ans = np.append(ans, square_grid)
+    ans = np.append(ans, board_cubes_grid)
     ans = np.append(ans, state[0].flatten())
     ans = np.append(ans, state[1])
     ans[-1] = ans[-1] / 200
@@ -262,7 +268,7 @@ def get_score(oldCleared, newCleared, isComplete):
 def main():
     global alpha, epsilon
     # run_env = Tetris(action_type='grouped', is_display=True)
-    train_env = Tetris(action_type='grouped', is_display=True)
+    train_env = Tetris(action_type='grouped', is_display=False)
     env = train_env
     observation = env.reset()
     state = evaluate_features(observation)
@@ -273,6 +279,7 @@ def main():
     grad_sum = 0
     rand = False
     total_score = 0
+    prev_best = None
     for i_episode in range(50000000):
         observation = env.reset()
         grade = 0
@@ -284,7 +291,7 @@ def main():
             if rand:
                 env.render()
             prevClear = env.totalCleared
-            action = act_epsilon_greedy(state, action_evaluator)
+            action = act_epsilon_greedy(state, action_evaluator, prev_best)
 
             observation, _, done, _, _ = env.step(action)
 
@@ -294,20 +301,20 @@ def main():
                 grad_sum += grade
                 nextstate = evaluate_features(observation)
                 if any(old_state):
-                    action = act_greedy(nextstate, action_evaluator)
-                    nextval = action_evaluator.eval_grade(state, action)
-                    action_evaluator.update(old_state, action, grade,nextval)
+                    prev_best, nextval = act_greedy(nextstate, action_evaluator)
+                    # nextval = action_evaluator.eval_grade(state, action)
+                    action_evaluator.update(old_state, prev_best, grade,nextval)
                 old_state = state
                 state = nextstate
             # print("reward:", reward)
             if done:
-                sys.stdout.flush()
                 action_evaluator.update(old_state, action, -500, 0)
                 iteration += 1
                 grad_sum += grade
                 env = train_env
                 if iteration % 50 == 0:
                     print("game number", i_episode, "avg:", grad_sum/iteration, "epsilon:", epsilon, "alpha:", alpha)
+                    sys.stdout.flush()
                     f = open('resolts.csv', 'a', newline='')
                     with f:
                         writer = csv.writer(f)
