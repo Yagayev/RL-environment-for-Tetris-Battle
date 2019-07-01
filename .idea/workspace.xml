@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="489232ca-e87b-4eea-89dd-67f858c9d38b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/aiplay.py" beforeDir="false" afterPath="$PROJECT_DIR$/aiplay.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resolts.csv" beforeDir="false" afterPath="$PROJECT_DIR$/resolts.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vecs.json" beforeDir="false" afterPath="$PROJECT_DIR$/vecs.json" afterDir="false" />
@@ -17,11 +18,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/aiplay.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="18" column="20" selection-start-line="18" selection-start-column="20" selection-end-line="18" selection-end-column="20" />
+            <state relative-caret-position="337">
+              <caret line="268" selection-start-line="268" selection-end-line="268" />
               <folding>
                 <element signature="e#1#14#0" expanded="true" />
-                <element signature="e#2836#3168#0" />
               </folding>
             </state>
           </provider>
@@ -46,6 +46,7 @@
       <find>vecs.json</find>
       <find>JSON</find>
       <find>DUMP</find>
+      <find>create_vectors</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -167,8 +168,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="848" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12483487" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12433863" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="Capture Tool" order="3" />
@@ -177,7 +179,7 @@
       <window_info id="UI Designer" order="6" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.30404463" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.43496504" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -265,11 +267,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/aiplay.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="18" column="20" selection-start-line="18" selection-start-column="20" selection-end-line="18" selection-end-column="20" />
+        <state relative-caret-position="337">
+          <caret line="268" selection-start-line="268" selection-end-line="268" />
           <folding>
             <element signature="e#1#14#0" expanded="true" />
-            <element signature="e#2836#3168#0" />
           </folding>
         </state>
       </provider>
