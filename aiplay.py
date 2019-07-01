@@ -9,20 +9,20 @@ import csv
 import warnings
 
 np.seterr(all='warn')
-alpha_init = 0.05
-alpha_min = 0.001
+alpha_init = 0.00001
+alpha_min = 0.00001
 alpha_decay = False
 alpha_decay_factor = 0.999999999
 
-epsilon_init = 0.2
-epsilon_decay = False
-epsilon_min = 0.0001
-epsilon_decay_factor = 0.999999
+epsilon_init = 0.05
+epsilon_decay = True
+epsilon_min = 0.01
+epsilon_decay_factor = 0.999991
 
 
 alpha = alpha_init
 epsilon = epsilon_init
-
+gamma = 0.9
 
 
 
@@ -141,10 +141,11 @@ class EvalActions:
                     mul_vec_by_a_acalar(2 / diviser, vec)
 
     def update(self, state, action, actual_grade, nextval):
+        global gamma
         # based on lecture 6 page page 14
         # print("state predict update", self.weights_left, state)
         expected_grade = self.eval_grade(state, action)
-        grade_error = (actual_grade + nextval*0.001 - expected_grade)
+        grade_error = (actual_grade + nextval*gamma- expected_grade)
         # if(-0.01 < grade_error <0.01 ):
         #     return
         if (0 <= action < 53 ):
@@ -264,7 +265,7 @@ def rate(curckear ,prevclear):
 def main():
     global alpha, epsilon
     # run_env = Tetris(action_type='grouped', is_display=True)
-    train_env = Tetris(action_type='grouped', is_display=False)
+    train_env = Tetris(action_type='grouped', is_display=True)
     env = train_env
     observation = env.reset()
     state = evaluate_features(observation)
@@ -275,7 +276,7 @@ def main():
     grad_sum = 0
     rand = False
     total_score = 0
-    for i_episode in range(1000000):
+    for i_episode in range(50000000):
         observation = env.reset()
         grade = 0
         state = evaluate_features(observation)
@@ -303,14 +304,13 @@ def main():
                 state = nextstate
             # print("reward:", reward)
             if done:
-                print("grade_sum is", grad_sum/(iteration+1))
                 sys.stdout.flush()
                 action_evaluator.update(old_state, action, -500, 0)
                 iteration += 1
                 grad_sum += grade
                 env = train_env
-                if iteration % 30 == 0:
-                    print(grad_sum/iteration)
+                if iteration % 50 == 0:
+                    print("game number", i_episode, "avg:", grad_sum/iteration, "epsilon:", epsilon, "alpha:", alpha)
                     f = open('resolts.csv', 'a', newline='')
                     with f:
                         writer = csv.writer(f)
