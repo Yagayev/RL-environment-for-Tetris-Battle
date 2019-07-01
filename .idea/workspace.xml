@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="489232ca-e87b-4eea-89dd-67f858c9d38b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/aiplay.py" beforeDir="false" afterPath="$PROJECT_DIR$/aiplay.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resolts.csv" beforeDir="false" afterPath="$PROJECT_DIR$/resolts.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vecs.json" beforeDir="false" afterPath="$PROJECT_DIR$/vecs.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/keyboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/keyboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resolts.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vecs.json" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/aiplay.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="337">
-              <caret line="268" selection-start-line="268" selection-end-line="268" />
+            <state relative-caret-position="26">
+              <caret line="264" column="61" selection-start-line="264" selection-start-column="61" selection-end-line="264" selection-end-column="61" />
               <folding>
                 <element signature="e#1#14#0" expanded="true" />
               </folding>
@@ -38,7 +38,6 @@
       <find>IMPOR</find>
       <find>PRINT</find>
       <find>NONLEGA</find>
-      <find>53</find>
       <find>ACTION</find>
       <find>UPDATE</find>
       <find>mul_vec_by_a_acalar</find>
@@ -46,7 +45,19 @@
       <find>vecs.json</find>
       <find>JSON</find>
       <find>DUMP</find>
+      <find>singleAction</find>
+      <find>STATE</find>
+      <find>self.state_type</find>
+      <find>state_type</find>
+      <find>ACTIONS</find>
+      <find>52</find>
       <find>create_vectors</find>
+      <find>self.weights</find>
+      <find>53</find>
+      <find>flat</find>
+      <find>ARRAY</find>
+      <find>preceptions_to_feacher_array</find>
+      <find>evaluate_features</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -55,8 +66,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/keyboard.py" />
         <option value="$PROJECT_DIR$/features.py" />
+        <option value="$PROJECT_DIR$/keyboard.py" />
         <option value="$PROJECT_DIR$/tetris.py" />
         <option value="$PROJECT_DIR$/aiplay.py" />
       </list>
@@ -147,9 +158,31 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="keyboard" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="RL-environment-for-Tetris-Battle" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/keyboard.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.aiplay" />
+        <item itemvalue="Python.keyboard" />
       </list>
     </recent_temporary>
   </component>
@@ -179,7 +212,7 @@
       <window_info id="UI Designer" order="6" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.43496504" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.14405595" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -227,13 +260,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/keyboard.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="13" column="17" selection-start-line="13" selection-start-column="17" selection-end-line="13" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/features.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="546">
@@ -251,13 +277,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tetris.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8381">
-          <caret line="498" column="37" selection-start-line="498" selection-start-column="31" selection-end-line="498" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/json/encoder.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="152">
@@ -265,10 +284,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/keyboard.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="24" column="50" selection-start-line="24" selection-start-column="50" selection-end-line="24" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tetris.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="88" column="39" selection-start-line="88" selection-start-column="37" selection-end-line="88" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/aiplay.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="268" selection-start-line="268" selection-end-line="268" />
+        <state relative-caret-position="26">
+          <caret line="264" column="61" selection-start-line="264" selection-start-column="61" selection-end-line="264" selection-end-column="61" />
           <folding>
             <element signature="e#1#14#0" expanded="true" />
           </folding>

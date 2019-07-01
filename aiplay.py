@@ -24,72 +24,9 @@ alpha = alpha_init
 epsilon = epsilon_init
 gamma = 0.9
 
-
-
-# returns scalar, [a,b]X[c,d] = a*c+b*d
-def vec_scalaric_mul(vec1, vec2):
-    # print("multiply_vec", vec1, vec2)
-    som = 0
-    for i in range(0,len(vec2)):
-        som += vec1[i]*vec2[i]
-    return som
-
-
-def mul_vec(vec1, vec2):
-    ans = []
-    for i in range(0, len(vec2)):
-        ans.append(vec1[i] * vec2[i])
-    return ans
-
-
-def add_vec(vec1, vec2):
-    ans = []
-    for i in range(0, len(vec2)):
-        ans.append(vec1[i] + vec2[i])
-    return ans
-
-
-def sub_vec(vec1, vec2):
-    ans = []
-    for i in range(0, len(vec2)):
-        ans.append(vec1[i] - vec2[i])
-    return ans
-
-
-def abs_vec(vec):
-    ans = []
-    for i in range(0, len(vec)):
-        ans.append(abs(vec[i]))
-    return ans
-
-
-def mul_vec_by_a_acalar(multiplier, state):
-    res = []
-    for i in range(0, len(state)):
-        res.append(multiplier * state[i])
-    return res
-
-
-
-def normalizeOUT(vec):
-        prblematic = False
-        for i in range(0,len(vec)):
-            if  (-0.0001 < vec[i] < 0.0001):
-                prblematic = True
-        else:
-            normalize_to_one(vec)
-        return vec
-
-def normalize_to_one(vec):
-    diviser = 0
-    for v in vec:
-        diviser += abs(v)
-    return mul_vec_by_a_acalar(1/diviser, vec)
-
-
 def create_vectors(size, initVal):
-    allVecs = [0] * 53
-    for i in range(53):
+    allVecs = [0] * 52
+    for i in range(52):
         singleVec = [0] * size
         for j in range(0, size):
             singleVec[j] = initVal
@@ -118,7 +55,7 @@ class EvalActions:
         norm = np.linalg.norm(state)
         state = state/norm
         # print("state", state, "norm", norm, "")
-        if (0 <= action < 53 ):
+        if (0 <= action < 52 ):
             return np.dot(self.weights[action], state)
         raise(NonLegalAction("not a valid action "))
 
@@ -126,19 +63,6 @@ class EvalActions:
         lst = [x.tolist() for x in self.weights]
         with open('vecs.json', 'w') as outfile:
             json.dump(lst, outfile, indent=4)
-
-
-
-    def normalize3(self, relevent):
-        for i in range(0, len(relevent)):
-            if (-0.0001 < relevent[i] < 0.0001):
-                diviser = 0
-                for vec in self.weights:
-                    for v in self.vec:
-                        diviser += abs(v)
-
-                for vec in self.weights:
-                    mul_vec_by_a_acalar(2 / diviser, vec)
 
     def update(self, state, action, actual_grade, nextval):
         global gamma
@@ -148,7 +72,7 @@ class EvalActions:
         grade_error = (actual_grade + nextval*gamma- expected_grade)
         # if(-0.01 < grade_error <0.01 ):
         #     return
-        if (0 <= action < 53 ):
+        if (0 <= action < 52 ):
             # grad_times_error_vec = mul_vec_by_a_acalar(grade_error, gradient)
             try:
                 state_times_w = np.multiply(self.weights[action], state)
@@ -165,7 +89,7 @@ class EvalActions:
             #       "\nerror_times_w_states_vec ", error_times_w_states_vec,
             #       "\ndelta_w ", delta_w,
             #       "\nadd_vec ", add_vec(self.weights, delta_w))
-            self.weights[action] = add_vec(self.weights[action], delta_w)
+            self.weights[action] = self.weights[action] + delta_w
             norm = np.linalg.norm(self.weights)
             self.weights = [weight / norm for weight in self.weights]
             #self.normalize3(self.weights_right)
@@ -193,7 +117,7 @@ def act_epsilon_greedy(given_state, action_evaluator):
 def act_greedy(given_state, action_evaluator):
     best_action = 0
     best_action_grade = 0
-    for i in range(53):
+    for i in range(52):
         evaled = action_evaluator.eval_grade(given_state, i)
         if(evaled > best_action_grade ):
             best_action_grade = evaled
@@ -206,9 +130,43 @@ def observation_to_score(observation):
 
 
 def act_random():
-    return random.randint(0, 52)
+    return random.randint(0, 51)
+
+def observtion_to_squares(lines):
+    ans = []
+    for i in range(0, len(lines)-1):
+        first =lines[i]
+        sec = lines[i+1]
+        for j in range(0, len(first)-1):
+            ans +=[[first[j],first[j+1],sec[j],sec[j+1]]]
+    return ans
 
 
+def evaluate_features(state):
+    board = [line.flatten() for line in state[0]]
+    line_grid = []
+    for line in board:
+        line_grid += preceptions_to_feacher_array(line)
+    cols = transpose(board)
+    col_pairs = []
+    for col in cols:
+        col_pairs += all_niot(col, 2)
+    col_grid = []
+    for pair in col_pairs:
+        col_grid += preceptions_to_feacher_array(pair)
+
+    squares = observtion_to_squares(board)
+    square_grid = []
+    for square in squares:
+        square_grid += preceptions_to_feacher_array(square)
+    ans = np.append(line_grid, col_grid)
+    ans = np.append(ans, square_grid)
+    ans = np.append(ans, state[0].flatten())
+    ans = np.append(ans, state[1])
+    ans[-1] = ans[-1] / 200
+    ans[-2] = ans[-2] / 200
+    ans[-3] = ans[-3] / 200
+    return ans
 
 
 
@@ -218,11 +176,11 @@ def act_random():
 # return: a flat array of features
 # for each cell i, cell j, and shape k, there are 8 fetures representing the truth table
 # of i, j, k
-def evaluate_features(state):
-    flattened_board = np.array(state[0]).flatten()
-    # board_grid = feature_arr_to_grid(flattened_board)
-    board_cubes_grid = two_feature_arrs_to_grid(flattened_board, state[1][0:7])
-    return board_cubes_grid
+# def evaluate_features(state):
+#     flattened_board = np.array(state[0]).flatten()
+#     # board_grid = feature_arr_to_grid(flattened_board)
+#     board_cubes_grid = two_feature_arrs_to_grid(flattened_board, state[1][0:7])
+#     return board_cubes_grid
 
 #
 def feature_pair_to_2d_grid(f1,f2):
@@ -264,7 +222,7 @@ def make_decimal(vec):
     for member in revVec:
         ans = ans + member* pow(2, pos)
         pos += 1
-    return  ans
+    return ans
 
 
 def preceptions_to_feacher_array(collection):
@@ -275,6 +233,10 @@ def preceptions_to_feacher_array(collection):
     dec = make_decimal(collection)
     ans[dec] = 1
     return ans
+
+def transpose(arr):
+    return [[row[i] for row in arr] for i in range(len(arr[0]))]
+
 
 def all_niot_impl(arr, acc, n):
     if n == 0:
@@ -295,12 +257,12 @@ def get_score(oldCleared, newCleared, isComplete):
         score = 1
     score = score + (newCleared-oldCleared)*10
     return score
-def rate(curckear ,prevclear):
-    return 100*(curckear - prevclear) + 1
+
+
 def main():
     global alpha, epsilon
     # run_env = Tetris(action_type='grouped', is_display=True)
-    train_env = Tetris(action_type='grouped', is_display=False)
+    train_env = Tetris(action_type='grouped', is_display=True)
     env = train_env
     observation = env.reset()
     state = evaluate_features(observation)
@@ -315,7 +277,7 @@ def main():
         observation = env.reset()
         grade = 0
         state = evaluate_features(observation)
-        old_state = False
+        old_state = []
         for t in range(2000000):
             if alpha_decay:
                 alpha = max(alpha * alpha_decay_factor, alpha_min)
@@ -331,7 +293,7 @@ def main():
                 grade = get_score(prevClear, env.totalCleared, done)
                 grad_sum += grade
                 nextstate = evaluate_features(observation)
-                if old_state:
+                if any(old_state):
                     action = act_greedy(nextstate, action_evaluator)
                     nextval = action_evaluator.eval_grade(state, action)
                     action_evaluator.update(old_state, action, grade,nextval)
