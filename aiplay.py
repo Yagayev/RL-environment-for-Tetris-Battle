@@ -10,19 +10,22 @@ import warnings
 
 np.seterr(all='warn')
 alpha_init = 0.00001
-alpha_min = 0.00001
-alpha_decay = False
-alpha_decay_factor = 0.999999999
+alpha_min = 0.00000001
+alpha_decay = True
+alpha_decay_factor = 0.99999999999
 
 epsilon_init = 0.8
 epsilon_decay = True
 epsilon_min = 0.01
-epsilon_decay_factor = 0.999998
+epsilon_decay_factor = 0.9999995
 
 
 alpha = alpha_init
 epsilon = epsilon_init
 gamma = 0.9
+
+height_punish = 0.3
+height_reward = 5
 
 def create_vectors(size, initVal):
     allVecs = [0] * 52
@@ -102,18 +105,19 @@ class NonLegalAction(ValueError):
 
 
 def act_epsilon_greedy(given_state, action_evaluator, perv_best):
-    global epsilon
+    global epsilon, epsilon_decay_factor
     rand_seed = random.random()
 
     if rand_seed > epsilon:
         if perv_best != None:
-            ans, _ = act_greedy(given_state, action_evaluator)
-        else:
             ans = perv_best
+        else:
+            ans, _ = act_greedy(given_state, action_evaluator)
     else:
         ans = act_random()
     if epsilon_decay:
         epsilon = max(epsilon * epsilon_decay_factor, epsilon_min)
+        epsilon_decay_factor = epsilon_decay_factor*alpha_decay_factor
     return ans
 
 
@@ -169,9 +173,11 @@ def evaluate_features(state):
     ans = np.append(ans, board_cubes_grid)
     ans = np.append(ans, state[0].flatten())
     ans = np.append(ans, state[1])
-    ans[-1] = ans[-1] / 200
+    ans = np.append(ans, [hight(board)])
+    ans[-1] = ans[-1] / 20
     ans[-2] = ans[-2] / 200
     ans[-3] = ans[-3] / 200
+    ans[-4] = ans[-4] / 200
     return ans
 
 
@@ -257,13 +263,29 @@ def all_niot_impl(arr, acc, n):
     without = all_niot_impl(rest, acc, n)
     return withcurr + without
 
-def get_score(oldCleared, newCleared, isComplete):
+def hight(metrix):
+    ans = len(metrix)
+    for line in metrix:
+        if max(line) == 0:
+            ans -=1
+        else:
+            return ans
+    return ans
+
+def get_score(oldCleared, newCleared,oldstate,newstate ,isComplete):
     score = 0
     if not isComplete:
         score = 1
     score = score + (newCleared-oldCleared)*10
+    statelen = len(newstate)
+    height_delta = (newstate[statelen-1] -oldstate[statelen-1])  # positive is bad
+    # score -=(newstate[statelen-3] -oldstate[statelen-3])*bumbingPunish
+    holes_delta =(newstate[statelen-2] -oldstate[statelen-2])  # positive is bad
+    if height_delta > 0 and holes_delta > 0:
+        score -= height_punish
+    if height_delta <= 0 and holes_delta <= 0:
+        score += height_reward
     return score
-
 
 def main():
     global alpha, epsilon
@@ -297,10 +319,12 @@ def main():
 
             if not done:
                 # grade = env.totalCleared -  prevClear
-                grade = get_score(prevClear, env.totalCleared, done)
-                grad_sum += grade
                 nextstate = evaluate_features(observation)
+
+
                 if any(old_state):
+                    grade = get_score(prevClear, env.totalCleared, old_state, nextstate, done)
+                    grad_sum += grade
                     prev_best, nextval = act_greedy(nextstate, action_evaluator)
                     # nextval = action_evaluator.eval_grade(state, action)
                     action_evaluator.update(old_state, prev_best, grade,nextval)

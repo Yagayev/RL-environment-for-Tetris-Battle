@@ -18,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/aiplay.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="183">
-              <caret line="309" column="20" selection-start-line="309" selection-start-column="20" selection-end-line="309" selection-end-column="20" />
+            <state relative-caret-position="162">
+              <caret line="287" selection-start-line="287" selection-end-line="287" />
               <folding>
                 <element signature="e#1#14#0" expanded="true" />
               </folding>
@@ -31,12 +31,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>get_state</find>
-      <find>def get_state</find>
-      <find>IMPOR</find>
-      <find>PRINT</find>
-      <find>NONLEGA</find>
-      <find>ACTION</find>
       <find>UPDATE</find>
       <find>mul_vec_by_a_acalar</find>
       <find>EVAL</find>
@@ -61,6 +55,12 @@
       <find>ans =</find>
       <find>act_greedy</find>
       <find>act_epsilon_greedy</find>
+      <find>epsilon_decay_factor</find>
+      <find>GET_SCORE</find>
+      <find>get_score</find>
+      <find>GRADE</find>
+      <find>height_punish</find>
+      <find>PRINT</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -72,6 +72,7 @@
         <option value="$PROJECT_DIR$/features.py" />
         <option value="$PROJECT_DIR$/keyboard.py" />
         <option value="$PROJECT_DIR$/tetris.py" />
+        <option value="$PROJECT_DIR$/graphs/delete" />
         <option value="$PROJECT_DIR$/aiplay.py" />
       </list>
     </option>
@@ -94,6 +95,11 @@
             <path>
               <item name="RL-environment-for-Tetris-Battle" type="b2602c69:ProjectViewProjectNode" />
               <item name="RL-environment-for-Tetris-Battle" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RL-environment-for-Tetris-Battle" type="b2602c69:ProjectViewProjectNode" />
+              <item name="RL-environment-for-Tetris-Battle" type="462c0819:PsiDirectoryNode" />
+              <item name="graphs" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -204,6 +210,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="848" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12433863" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -214,7 +221,7 @@
       <window_info id="UI Designer" order="6" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.2769231" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.27832168" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -295,15 +302,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tetris.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="423" column="51" selection-start-line="423" selection-start-column="42" selection-end-line="423" selection-end-column="51" />
+        <state relative-caret-position="153">
+          <caret line="82" column="44" selection-start-line="82" selection-start-column="38" selection-end-line="82" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphs/delete.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="49" column="47" selection-start-line="49" selection-start-column="47" selection-end-line="49" selection-end-column="47" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/aiplay.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="309" column="20" selection-start-line="309" selection-start-column="20" selection-end-line="309" selection-end-column="20" />
+        <state relative-caret-position="162">
+          <caret line="287" selection-start-line="287" selection-end-line="287" />
           <folding>
             <element signature="e#1#14#0" expanded="true" />
           </folding>
