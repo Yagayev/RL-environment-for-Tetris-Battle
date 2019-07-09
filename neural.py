@@ -26,8 +26,6 @@ epsilon_min = 0.01
 
 epsilon_decay_factor = 2 ** -13
 
-epsilon_decay_slowdown_at = 0.35
-epsilon_slower_decay = 0.99999991
 
 epsilon_decay_slowdown_at = 0.35
 epsilon_slower_decay = 0.99999995
@@ -40,11 +38,11 @@ state_size = 245
 
 # rewards and punishments
 # all punishments are REDUCED from the score
-height_and_holes_punish = 1
+height_and_holes_punish =0.05
 height_without_holes_reward = 1
 height_reward = 0.5
 holes_reward = 0.5
-survival_reward = 0.001
+survival_reward = 0.1
 death_punish = 10
 line_pop_bonus = 5
 filename = 'bigger_alpha.json'
