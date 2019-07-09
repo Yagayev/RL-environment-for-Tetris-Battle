@@ -24,7 +24,7 @@ epsilon_init = 1.0
 epsilon_decay = True
 epsilon_min = 0.01
 
-epsilon_decay_factor = 2 ** -13
+epsilon_decay_factor = 2 ** -15
 
 
 epsilon_decay_slowdown_at = 0.35
@@ -40,11 +40,11 @@ state_size = 245
 # all punishments are REDUCED from the score
 height_and_holes_punish =0.05
 height_without_holes_reward = 1
-height_reward = 0.5
-holes_reward = 0.5
-survival_reward = 0.1
-death_punish = 10
-line_pop_bonus = 5
+height_reward = 1
+holes_reward = 1
+survival_reward = 0.5
+death_punish = 20
+line_pop_bonus = 8
 filename = 'bigger_alpha.json'
 
 no_rotations = list(range(0, 52, 4))
@@ -431,19 +431,21 @@ class TetrisAgent:
             mean_surv = np.mean(survive)
             mean_popped = np.mean(popped)
             if mean_surv >= self.n_win_ticks and e >= 100:
+                print('[Episode {}] Mean survival time: {}\t epsilon: {}\tscore: {}\tpopped avg: {}'.format(e, mean_surv,self.epsilon, mean_score, mean_popped))
+
                 if not self.quiet:
                     print('Ran {} episodes. Solved after {} trials ✔'.format(e, e - 100))
-                print("last scores:", mean_score, scores)
-                print("last survive:", mean_surv, survive)
-                print("+++++++++++++++++++++++++++++++++")
+                # print("last scores:", mean_score, scores)
+                # print("last survive:", mean_surv, survive)
+                # print("+++++++++++++++++++++++++++++++++")
                 sys.stdout.flush()
                 return e - 100
             if e % 100 == 0 and not self.quiet:
-                print('[Episode {}] - Mean survival time over last 100 episodes was {} ticks. with epsilon {} '.format(e, mean_score,self.epsilon))
-                print("last scores:", mean_score, scores)
-                print("last survive:", mean_surv, survive)
-                print("popped:", mean_popped, popped)
-                print("+++++++++++++++++++++++++++++++++")
+                print('[Episode {}] Mean survival time: {}\t epsilon: {}\tscore: {}\tpopped avg: {}'.format(e, mean_surv,self.epsilon, mean_score, mean_popped))
+                # print("last scores:", mean_score, scores)
+                # print("last survive:", mean_surv, survive)
+                # print("popped:", mean_popped, popped)
+                # print("+++++++++++++++++++++++++++++++++")
                 sys.stdout.flush()
 
 
@@ -482,19 +484,8 @@ class TetrisAgent:
             mean_score = np.mean(scores)
             mean_surv = np.mean(survive)
             mean_popped = np.mean(popped)
-            if mean_surv >= self.n_win_ticks and e >= 100:
-                if not self.quiet:
-                    print('Ran {} episodes. Solved after {} trials ✔'.format(e, e - 100))
-                print("last scores:", mean_score, scores)
-                print("last survive:", mean_surv, survive)
-                print("+++++++++++++++++++++++++++++++++")
-                sys.stdout.flush()
-                return e - 100
-                print('[Episode {}] - Mean survival time over last 100 episodes was {} ticks. with epsilon {} '.format(e, mean_score,self.epsilon))
-            print("last scores:", mean_score, scores)
-            print("last survive:", mean_surv, survive)
-            print("popped:", mean_popped, popped)
-            print("+++++++++++++++++++++++++++++++++")
+            print('[Episode {}] Mean survival time: {}\t epsilon: {}\tscore: {}\tpopped avg: {}'.format(e, mean_surv,self.epsilon, mean_score, mean_popped))
+
             sys.stdout.flush()
 
             self.replay(self.batch_size)
@@ -506,4 +497,5 @@ if __name__ == '__main__':
     agent = TetrisAgent()
 
     agent.train()
+    print("\n\n******************\nDONE TRAINING\n******************")
     agent.play()
