@@ -20,11 +20,11 @@ alpha_min = 0.0001
 alpha_decay = True
 alpha_decay_factor = 0.9999999999
 
-epsilon_init = 0.8
+epsilon_init = 1.0
 epsilon_decay = True
 epsilon_min = 0.01
 
-epsilon_decay_factor = 0.9999991
+epsilon_decay_factor = 2 ** -13
 
 epsilon_decay_slowdown_at = 0.35
 epsilon_slower_decay = 0.99999991
@@ -37,15 +37,17 @@ alpha = alpha_init
 epsilon = epsilon_init
 gamma = 0.9
 state_size = 245
+
 # rewards and punishments
 # all punishments are REDUCED from the score
-height_punish = 0.5
+height_and_holes_punish = 1
 height_without_holes_reward = 1
-height_reward = 0.3
-survival_reward = 1
+height_reward = 0.5
+holes_reward = 0.5
+survival_reward = 0.001
 death_punish = 10
-line_pop_bonus = 4
-filename = '364vecs-random.json'
+line_pop_bonus = 5
+filename = 'bigger_alpha.json'
 
 no_rotations = list(range(0, 52, 4))
 one_rotation = no_rotations + list(range(1, 52, 2))
@@ -279,33 +281,6 @@ def hight(metrix):
     return ans
 
 
-    # score -=(newstate[statelen-3] -oldstate[statelen-3])*bumbingPunish
-
-# def get_score(oldCleared, newCleared,oldstate,newstate ,isComplete):
-#     score = 0
-#     # if not isComplete:
-#     #     score = survival_reward
-#     score = score + (newCleared-oldCleared)*line_pop_bonus
-#     statelen = len(newstate)
-#     height_delta = (newstate[statelen-1] - oldstate[statelen-1])  # positive is bad
-#     holes_delta = (newstate[statelen-2] - oldstate[statelen-2])  # positive is bad
-#     if height_delta > 0 and holes_delta > 0:
-#         score -= height_punish
-#     if height_delta <= 0 and holes_delta <= 0:
-#         score += height_without_holes_reward
-#     if height_delta <= 0:
-#         score += height_reward
-#     return score
-def get_score(oldCleared, newCleared,oldstate,newstate ,isComplete):
-    score = 0
-    score = score + (newCleared-oldCleared)*line_pop_bonus
-    statelen = len(newstate)
-    height_factor = (20 - newstate[statelen-1]) /20
-    score = score + height_factor
-    holes_delta = (newstate[statelen-2] - oldstate[statelen-2])  # positive is bad
-    if holes_delta:
-        score -= height_punish
-    return score
 
 def obs_to_shape_num(obs):
     for i in range(0,7):
@@ -313,107 +288,80 @@ def obs_to_shape_num(obs):
             return i
 
 
-# def main():
-#     global alpha, epsilon
-#     # run_env = Tetris(action_type='grouped', is_display=True)
-#     train_env = Tetris(action_type='grouped', is_display=False)
-#     env = train_env
-#     observation = env.reset()
-#     state = evaluate_features(observation)
-#     # print(state)
-#     action_evaluator = [None] * 7
-#     for i in range(0,7):
-#         action_evaluator[i] = EvalActions(len(state), 1.0, str(i))
-#         # one evaluator for every shape
-
-#     iteration = 0
-#     grad_sum = 0
-#     rand = False
-#     total_score = 0
-#     prev_best = None
-#     totalTime = 0
-#     prev_shape = -8
-#     for i_episode in range(50000000):
-#         observation = env.reset()
-#         grade = 0
-#         state = evaluate_features(observation)
-#         old_state = []
-#         for t in range(2000000):
-#             if alpha_decay:
-#                 alpha = max(alpha * alpha_decay_factor, alpha_min)
-#             if rand:
-#                 env.render()
-#             prevClear = env.totalCleared
-#             shape = obs_to_shape_num(observation)
-#             action = act_epsilon_greedy(state, action_evaluator[shape], prev_best ,shape)
-
-#             observation, _, done, _, _ = env.step(action)
-
-#             if not done:
-
-#                 # grade = env.totalCleared -  prevClear
-#                 nextstate = evaluate_features(observation)
+def get_score(oldCleared, newCleared,oldstate,newstate ,isComplete):
+    score = 0
+    score = score + (newCleared-oldCleared)*line_pop_bonus
+    statelen = len(newstate)
+    height_delta = (newstate[statelen-1] - oldstate[statelen-1])  # positive is bad
+    holes_delta = (newstate[statelen-2] - oldstate[statelen-2])  # positive is bad
+    if height_delta > 0 and holes_delta > 0:
+        score -= height_and_holes_punish
+    if height_delta <= 0 and holes_delta <= 0:
+        score += height_without_holes_reward
+    if height_delta <= 0:
+        score += height_reward
+    if height_delta <= 0:
+        score += holes_reward
+    return score
 
 
-#                 if any(old_state):
-#                     grade = get_score(prevClear, env.totalCleared, old_state, nextstate, done)
-#                     grad_sum += grade
-#                     prev_best, nextval = act_greedy(nextstate, action_evaluator[shape],shape)
-#                     # nextval = action_evaluator.eval_grade(state, action)
-#                     action_evaluator[prev_shape].update(old_state, prev_best, grade,nextval)
-#                 old_state = state
-#                 prev_shape = shape
-#                 state = nextstate
-#             # print("reward:", reward)
-#             if done:
-#                 totalTime += t
-#                 action_evaluator[prev_shape].update(old_state, action, -death_punish, 0)
-#                 iteration += 1
-#                 grad_sum += grade
-#                 env = train_env
-#                 if iteration % 500 == 0:
-#                     # print("totalTime = ", totalTime ,"iteration = ", iteration)
 
-#                     print("game number", i_episode, "avg tim:", totalTime/iteration, "avg sco:", grad_sum/iteration, "epsilon:", epsilon, "alpha:", alpha)
-#                     sys.stdout.flush()
-#                     f = open('resolts.csv', 'a', newline='')
-#                     with f:
-#                         writer = csv.writer(f)
-#                         writer.writerows([[grad_sum/iteration],[totalTime/iteration]])
-#                     for evaluator in action_evaluator:
-#                         evaluator.save_vecs()
-#                     # sys.stdout.flush()
-#                     iteration = 0
-#                     grad_sum = 0
-#                     totalTime = 0
-#                     # env = run_env
-#                 break
-#     env.close()
-#     action_evaluator.save_vecs()
+def calc_height_and_holes(state):
+    board = [line.flatten() for line in state[0]]
+    height = hight(board)
+    holes = state[1][-1]
+    return height, holes
 
-# if __name__ == '__main__':
-#     main()
 class scoreCalc():
         def __init__(self, env):
             self.env = env
             self.oldBoom = 0
-        def getScore(self):
-            score = 1 + (self.env.totalCleared -self.oldBoom )*10
+            self.old_height = 0
+            self.old_holes = 0
+
+
+        def getScore(self, holes, height, done):
+            if done:
+                # nullify
+                self.oldBoom = 0
+                self.old_height = 0
+                self.old_holes = 0
+
+                return -death_punish
+
+            score = survival_reward + (self.env.totalCleared - self.oldBoom)*line_pop_bonus
             self.oldBoom = self.env.totalCleared
+
+            holes_delta = holes - self.old_holes
+            height_delta = height - self.old_height
+            if height_delta > 0 and holes_delta > 0:
+                score -= height_and_holes_punish
+            if height_delta <= 0 and holes_delta <= 0:
+                score += height_without_holes_reward
+            if height_delta <= 0:
+                score += height_reward
+            if height_delta <= 0:
+                score += holes_reward
+
             return score
+
         def zerofy(self):
             self.oldBoom = 0
 
 
-class TetrisAgent():
-    def __init__(self, n_episodes=1000000, n_win_ticks=2000, max_env_steps=None, gamma=1.0, epsilon=1.0, epsilon_min=0.001, epsilon_log_decay=0.99995, alpha=0.01, alpha_decay=0.01, batch_size=64, monitor=False, quiet=False):
+def preprocess_state(state):
+    return np.reshape(state, [1, state_size])
+
+
+class TetrisAgent:
+    def __init__(self, n_episodes=1000000, n_win_ticks=2000, max_env_steps=None, gamma=gamma, epsilon=epsilon_init, epsilon_min=epsilon_min, epsilon_decay=epsilon_decay_factor, alpha=alpha_init, alpha_decay=alpha_decay_factor, batch_size=64, monitor=False, quiet=False):
         self.memory = deque(maxlen=100000)
         train_env = Tetris(action_type='grouped', is_display=False)
         self.env = train_env 
         self.gamma = gamma
         self.epsilon = epsilon
         self.epsilon_min = epsilon_min
-        self.epsilon_decay = epsilon_log_decay
+        self.epsilon_decay = epsilon_decay
         self.alpha = alpha
         self.alpha_decay = alpha_decay
         self.n_episodes = n_episodes
@@ -427,22 +375,19 @@ class TetrisAgent():
         # Init model
         self.model = Sequential()
         self.model.add(Dense(52 , input_dim=state_size, activation='tanh'))#input-observ
-        self.model.add(Dense(512, activation='tanh'))
-        self.model.add(Dense(512, activation='tanh'))
+        self.model.add(Dense(1024, activation='tanh'))
+        self.model.add(Dense(1024, activation='tanh'))
         self.model.add(Dense(52, activation='linear')) #outpot-actions
         self.model.compile(loss='mse', optimizer=Adam(lr=self.alpha, decay=self.alpha_decay))
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
 
-    def choose_action(self, state, epsilon):
-        return act_random() if (np.random.random() <= epsilon) else np.argmax(self.model.predict(state))
+    def choose_action(self, state):
+        return act_random() if (np.random.random() <= self.epsilon) else np.argmax(self.model.predict(state))
 
-    def get_epsilon(self):
-        return max(self.epsilon_min,self.epsilon)
-
-    def preprocess_state(self, state):
-        return np.reshape(state, [1, state_size  ])
+    def update_epsilon(self):
+        self.epsilon = max(self.epsilon_min,self.epsilon-self.epsilon_decay)
 
     def replay(self, batch_size):
         x_batch, y_batch = [], []
@@ -455,8 +400,7 @@ class TetrisAgent():
             y_batch.append(y_target[0])
         
         self.model.fit(np.array(x_batch), np.array(y_batch), batch_size=len(x_batch), verbose=0)
-        if self.epsilon > self.epsilon_min:
-            self.epsilon *= self.epsilon_decay
+        self.update_epsilon()
 
     def train(self):
         scores = deque(maxlen=100)
@@ -466,17 +410,19 @@ class TetrisAgent():
         for e in range(self.n_episodes):
             grader.zerofy()
             state = evaluate_features(self.env.reset())
-            state = self.preprocess_state(state)
+            state = preprocess_state(state)
             done = False
             i = 0
             scoreCount = 0
             while not done:
-                action = self.choose_action(state, self.get_epsilon())
+                action = self.choose_action(state)
                 next_state, _, done, _, _ = self.env.step(action)
+                height, holes = calc_height_and_holes(next_state)
                 next_state = evaluate_features(next_state)
-                reward = grader.getScore()
+                reward = grader.getScore(height=height, holes=holes, done=done)
+                sys.stdout.flush()
                 scoreCount += reward
-                next_state = self.preprocess_state(next_state)
+                next_state = preprocess_state(next_state)
                 self.remember(state, action, reward, next_state, done)
                 state = next_state
                 i += 1
@@ -495,7 +441,7 @@ class TetrisAgent():
                 sys.stdout.flush()
                 return e - 100
             if e % 100 == 0 and not self.quiet:
-                print('[Episode {}] - Mean survival time over last 100 episodes was {} ticks. with epsilon {} '.format(e, mean_score,self.get_epsilon()))
+                print('[Episode {}] - Mean survival time over last 100 episodes was {} ticks. with epsilon {} '.format(e, mean_score,self.epsilon))
                 print("last scores:", mean_score, scores)
                 print("last survive:", mean_surv, survive)
                 print("popped:", mean_popped, popped)
@@ -517,17 +463,18 @@ class TetrisAgent():
         for e in range(self.n_episodes):
             grader.zerofy()
             state = evaluate_features(self.env.reset())
-            state = self.preprocess_state(state)
+            state = preprocess_state(state)
             done = False
             i = 0
             scoreCount = 0
             while not done:
                 action = self.choose_action(state, 0.01)
                 next_state, _, done, _, _ = self.env.step(action)
+                height, holes = calc_height_and_holes(next_state)
                 next_state = evaluate_features(next_state)
-                reward = grader.getScore()
+                reward = grader.getScore(height=height, holes=holes, done=done)
                 scoreCount += reward
-                next_state = self.preprocess_state(next_state)
+                next_state = preprocess_state(next_state)
                 self.remember(state, action, reward, next_state, done)
                 state = next_state
                 i += 1
@@ -545,7 +492,7 @@ class TetrisAgent():
                 print("+++++++++++++++++++++++++++++++++")
                 sys.stdout.flush()
                 return e - 100
-                print('[Episode {}] - Mean survival time over last 100 episodes was {} ticks. with epsilon {} '.format(e, mean_score,self.get_epsilon()))
+                print('[Episode {}] - Mean survival time over last 100 episodes was {} ticks. with epsilon {} '.format(e, mean_score,self.epsilon))
             print("last scores:", mean_score, scores)
             print("last survive:", mean_surv, survive)
             print("popped:", mean_popped, popped)
