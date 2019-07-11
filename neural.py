@@ -14,6 +14,9 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 
+import tensorflow as tf
+from keras.models import load_model
+
 np.seterr(all='warn')
 alpha_init = 0.01
 alpha_min = 0.0001
@@ -46,6 +49,7 @@ survival_reward = 0.5
 death_punish = 20
 line_pop_bonus = 8
 filename = 'bigger_alpha.json'
+nuralSave_name ="tetrisModel.h5"
 
 no_rotations = list(range(0, 52, 4))
 one_rotation = no_rotations + list(range(1, 52, 2))
@@ -371,13 +375,21 @@ class TetrisAgent:
         observation = self.env.reset()
         # state = evaluate_features(observation)
         # Init model
-        self.model = Sequential()
-        self.model.add(Dense(52 , input_dim=state_size, activation='tanh'))#input-observ
-        self.model.add(Dense(1024, activation='tanh'))
-        self.model.add(Dense(1024, activation='tanh'))
-        self.model.add(Dense(52, activation='linear')) #outpot-actions
-        self.model.compile(loss='mse', optimizer=Adam(lr=self.alpha, decay=self.alpha_decay))
-
+        try:
+            self.model = load_model(nuralSave_name)
+            #model.summary()
+            #https://machinelearningmastery.com/save-load-keras-deep-learning-models/
+            print("successfully loaded file")
+        except:
+            self.model = Sequential()
+            self.model.add(Dense(52 , input_dim=state_size, activation='tanh'))#input-observ
+            self.model.add(Dense(1024, activation='tanh'))
+            self.model.add(Dense(1024, activation='tanh'))
+            self.model.add(Dense(52, activation='linear')) #outpot-actions
+            self.model.compile(loss='mse', optimizer=Adam(lr=self.alpha, decay=self.alpha_decay))
+            print("No file; seteting a new one")
+        finally:
+            print("done trying to load")
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
 
@@ -447,6 +459,8 @@ class TetrisAgent:
                 # print("popped:", mean_popped, popped)
                 # print("+++++++++++++++++++++++++++++++++")
                 sys.stdout.flush()
+                agent.model.save(nuralSave_name)
+                print("Saved model to disk")
 
 
             self.replay(self.batch_size)
